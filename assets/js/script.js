@@ -1,5 +1,4 @@
-var startTime = 10;
-
+var startTime = 60;
 var timerEl = document.getElementById('timer');
 var startButton = document.getElementById('start-btn');
 var questionContainerEl = document.getElementById('question-container');
@@ -7,13 +6,14 @@ var questionEl = document.getElementById('question');
 var answerButtonsEl = document.getElementById('answer-buttons')
 var shuffledQuestions;
 var currentQuestionIndex;
+var myTimer;
+var secondsLeft;
 
 startButton.addEventListener('click', startGame);
 
 // start game
 function startGame() {
-  console.log('started');
-  setInterval(updateTimer, 1000);
+  myTimer = setInterval(updateTimer, 1000);
   updateTimer();
   startButton.classList.add('hide');
   shuffledQuestions = questions.sort(() => Math.random() - .5);
@@ -24,34 +24,77 @@ function startGame() {
 
 // set next question
 function setNextQuestion() {
+  reset();
   showQuestion(shuffledQuestions[currentQuestionIndex]);
 };
 
 function showQuestion(question) {
   questionEl.innerText = question.question;
+  question.answers.forEach(answer => {
+    var button = document.createElement('button');
+    button.innerText = answer.text;
+    button.classList.add('btn');
+    if (answer.correct) {
+      button.dataset.correct = answer.correct;
+    }
+    button.addEventListener('click', selectAnswer);
+    answerButtonsEl.appendChild(button);
+  });
 }
 
-// selectAnswer
-function selectAnswer() {
+function reset() {
+  while (answerButtonsEl.firstChild) {
+    answerButtonsEl.removeChild(answerButtonsEl.firstChild);
+  };
+};
 
+// selectAnswer and check if correct
+function selectAnswer(e) {
+  var selectedBtn = e.target;
+  var correct = selectedBtn.dataset.correct;
+  if (correct) {
+    console.log("correct");
+  }
+  else {
+    console.log('wrongo');
+    startTime -= 10;
+  };
+  currentQuestionIndex++;
+  if (currentQuestionIndex == questions.length) {
+    console.log('done');
+    clearInterval(myTimer);
+    endGame();
+  }
+  else {
+    setNextQuestion();
+  };
+};
+
+function endGame() {
+  reset();
+  questionEl.innerHTML = '<h1>All Done!</h1>';
+  answerButtonsEl.removeAttribute('class');
+  answerButtonsEl.innerHTML = "<p>You're final score is </p>" + secondsLeft;
+  var initials = document.createElement('input');
+  
 }
 
 // timer function
 
-// setInterval(updateTimer, 1000);
-
 function updateTimer() {
-  var seconds = startTime;
+  secondsLeft = startTime;
 
-  seconds = seconds < 10 ? '0' + seconds : seconds;
-  if (seconds == 0) {
+  secondsLeft = secondsLeft < 10 ? '0' + secondsLeft : secondsLeft;
+  if (secondsLeft == 0) {
     return;
   };
 
-  timerEl.innerText = seconds;
+  timerEl.innerText = secondsLeft;
   startTime--;
   
 };
+
+// questions array
 
 var questions = [
   {

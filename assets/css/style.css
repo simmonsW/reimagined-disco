@@ -23,9 +23,8 @@ main {
   width: 800px;
   max-width: 80%;
   background-color: white;
-  border-radius: 5px;
+  border-bottom: 3px solid black;
   padding: 10px;
-  box-shadow: 0 0 10px 2px;
 }
 
 .btn-grid {
