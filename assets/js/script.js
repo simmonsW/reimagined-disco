@@ -15,6 +15,7 @@ var initials;
 var highScoresArray = [];
 // highScoresArray.sort((a,b) => (a.score > b.score) ? 1 : -1);
 var highScoreObj;
+var correct;
 
 window.onload = mainMenu();
 
@@ -71,6 +72,7 @@ function startGame() {
 
 // set next question
 function setNextQuestion() {
+  reset();
   showQuestion(shuffledQuestions[currentQuestionIndex]);
 };
 
@@ -104,6 +106,18 @@ function showQuestion(question) {
   // confirmation div
   rightWrong = document.createElement('div');
   rightWrong.classList.add('confirm');
+  // answer correct
+  if (correct) {
+    rightWrong.innerHTML = "<h2>Correct!!</h2>"
+  }
+  // check if it's the first question
+  else if (!correct && currentQuestionIndex > 0) {
+    rightWrong.innerHTML = "<h2>WRONG!!</h2>"
+  }
+  // !correct and 
+  else {
+    rightWrong.innerHTML = '';
+  }
   questionContainerEl.appendChild(rightWrong);
 }
 
@@ -116,33 +130,40 @@ function reset() {
 // selectAnswer and check if correct
 function selectAnswer(e) {
   var selectedBtn = e.target;
-  var correct = selectedBtn.dataset.correct;
+  correct = selectedBtn.dataset.correct;
   if (correct) {
     console.log("correct");
-    rightWrong.innerHTML = '<h2>Correct!!</h2>';
+    // rightWrong.innerHTML = "<h2>Correct!!</h2>";
+    // mainContainer.appendChild(rightWrong);
   }
   else {
     console.log('wrongo');
-    rightWrong.innerHTML = '<h2>Wrong!!</h2>';
+    // rightWrong.innerHTML = "<h2>Wrong!!</h2>";
+    // mainContainer.appendChild(rightWrong);
     startTime -= 10;
   };
-  // if (secondsLeft <= 0) {
-  //   timerEl.innerText = 0;
-  //   endGame();
-  // }
-  currentQuestionIndex++;
-  if (currentQuestionIndex == questions.length) {
-    console.log('done');
-    clearInterval(myTimer);
+  if (startTime <= 0) {
+    console.log('worked');
+    secondsLeft = 0;
+    timerEl.innerText = '0';
     endGame();
   }
   else {
-    reset();
-    setNextQuestion();
-  };
+    currentQuestionIndex++;
+    if (currentQuestionIndex == questions.length) {
+      console.log('done');
+      // clearInterval(myTimer);
+      endGame();
+    }
+    else {
+      // reset();
+      setNextQuestion();
+    };
+  }
 };
 
 function endGame() {
+  clearInterval(myTimer);
   reset();
   // questionEl.innerHTML = '<h1>All Done!</h1>';
   var allDone = document.createElement('h1');
@@ -151,7 +172,7 @@ function endGame() {
 
   // display high score
   var scoreHolder = document.createElement('div');
-  scoreHolder.innerHTML = "<p>You're final score is " + secondsLeft + ".";
+  scoreHolder.innerHTML = "<p>Your final score is " + secondsLeft + ".";
   mainContainer.appendChild(scoreHolder);
 
   // enter initials for high score
@@ -235,17 +256,17 @@ function highScores() {
 
 function updateTimer() {
   secondsLeft = startTime;
-
-  secondsLeft = secondsLeft < 10 ? '0' + secondsLeft : secondsLeft;
-  if (secondsLeft <= 0) {
-    clearInterval(myTimer);
-    // timerEl.innerText = 0;
-    endGame();
-  };
-
-  timerEl.innerText = secondsLeft;
-  startTime--;
-  
+  if (secondsLeft > 0) {
+    secondsLeft = secondsLeft < 10 ? '0' + secondsLeft : secondsLeft;
+    timerEl.innerText = secondsLeft;
+    startTime--;
+  }
+  else {
+  clearInterval(myTimer);
+  // timerEl.innerText = 0;
+  // secondsLeft = 0;
+  endGame();
+  }
 };
 
 // questions array
