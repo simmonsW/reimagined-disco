@@ -22,9 +22,12 @@ main {
 .container {
   width: 800px;
   max-width: 80%;
-  background-color: white;
-  border-bottom: 3px solid black;
+  background-color: gray;
   padding: 10px;
+}
+
+.confirm {
+  border-top: 3px solid turquoise;
 }
 
 .btn-grid {
@@ -60,4 +63,8 @@ main {
 
 .hide {
   display: none;
+}
+
+.center {
+  text-align: center;
 }
