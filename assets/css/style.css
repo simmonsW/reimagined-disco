@@ -22,12 +22,13 @@ main {
 .container {
   width: 800px;
   max-width: 80%;
-  background-color: gray;
+  /* background-color: gray; */
   padding: 10px;
 }
 
 .confirm {
   border-top: 3px solid turquoise;
+  padding: 10px;
 }
 
 .btn-grid {
@@ -61,10 +62,19 @@ main {
   align-items: center;
 }
 
-.hide {
-  display: none;
-}
-
 .center {
   text-align: center;
+}
+
+.li {
+  margin: 10px;
+  font-size: 1.5rem;
+}
+
+.li:nth-child(odd) {
+  background-color: orange;
+}
+
+.input {
+  margin-right: 10px;
 }

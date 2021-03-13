@@ -1,4 +1,4 @@
-var startTime = 10;
+var startTime = 60;
 var timerEl = document.getElementById('timer');
 var shuffledQuestions;
 var currentQuestionIndex;
@@ -9,11 +9,32 @@ var mainContainer = document.getElementById('container');
 mainContainer.classList.add('container');
 var questionContainerEl;
 var rightWrong;
+var highScoreLink = document.getElementById('high-scores');
+highScoreLink.addEventListener('click', highScores);
+var initials;
+var highScoresArray = [];
+// highScoresArray.sort((a,b) => (a.score > b.score) ? 1 : -1);
+var highScoreObj;
 
 window.onload = mainMenu();
 
+var loadHighScores = function() {
+  var savedScores = localStorage.getItem('highScoresArray');
+
+  if (!savedScores) {
+    return false;
+  };
+
+  highScoresArray = JSON.parse(savedScores);
+}
+var saveHighScores = function() {
+  localStorage.setItem('highScoresArray', JSON.stringify(highScoresArray));
+}
+
 // main menu
 function mainMenu() {
+  startTime = 60;
+  reset();
   // add title and append
   var title = document.createElement('h1');
   title.classList.add('center');
@@ -82,7 +103,7 @@ function showQuestion(question) {
 
   // confirmation div
   rightWrong = document.createElement('div');
-  rightWrong.classList.add('container', 'confirm');
+  rightWrong.classList.add('confirm');
   questionContainerEl.appendChild(rightWrong);
 }
 
@@ -98,13 +119,17 @@ function selectAnswer(e) {
   var correct = selectedBtn.dataset.correct;
   if (correct) {
     console.log("correct");
-    // rightWrong.innerHTML = "<h2>Correct!!</h2>";
+    rightWrong.innerHTML = '<h2>Correct!!</h2>';
   }
   else {
     console.log('wrongo');
-    // rightWrong.innerHTML = "<h2>Wrong!!</h2>";
+    rightWrong.innerHTML = '<h2>Wrong!!</h2>';
     startTime -= 10;
   };
+  // if (secondsLeft <= 0) {
+  //   timerEl.innerText = 0;
+  //   endGame();
+  // }
   currentQuestionIndex++;
   if (currentQuestionIndex == questions.length) {
     console.log('done');
@@ -130,15 +155,80 @@ function endGame() {
   mainContainer.appendChild(scoreHolder);
 
   // enter initials for high score
-  var initials = document.createElement('input');
+  initials = document.createElement('input');
+  initials.classList.add('input');
   var submit = document.createElement('button');
   submit.classList.add('btn');
+  submit.setAttribute('type', 'submit');
   submit.innerText = "Submit";
+  submit.addEventListener('click', storeHighScore);
   var highScoreSubmit = document.createElement('div');
   highScoreSubmit.innerHTML = "<p>Enter your initials below.</p>";
   highScoreSubmit.appendChild(initials);
   highScoreSubmit.appendChild(submit);
   mainContainer.appendChild(highScoreSubmit);
+}
+
+function storeHighScore() {
+  if (!initials.value) {
+    alert("Please enter your initials.");
+  }
+  else {
+    highScoreObj = {
+      initiald: initials.value,
+      score: secondsLeft
+    };
+    highScoresArray.push(highScoreObj);
+    saveHighScores();
+    highScores();
+  };
+};
+
+var clearScores = function() {
+  localStorage.clear();
+  while (highScoresArray.length > 0) {
+    highScoresArray.pop();
+  }
+
+  mainMenu();
+  console.log(highScoresArray);
+};
+
+function highScores() {
+  reset();
+  var title = document.createElement('h1');
+  title.innerText = "High Scores";
+  mainContainer.appendChild(title);
+
+  // display high score array
+  var displayArray = document.createElement('ol');
+  highScoresArray.sort((a,b) => (a.score < b.score) ? 1 : -1);
+  for (var i = 0; i < highScoresArray.length; i++) {
+    
+    var initial = highScoresArray[i].initiald;
+    var score = highScoresArray[i].score;
+    var scoreLi = document.createElement('li');
+    scoreLi.classList.add('li', 'li:nth-child(odd)');
+    scoreLi.innerHTML = initial.toUpperCase() + " - " + score;
+    displayArray.appendChild(scoreLi);
+  }
+  
+  // displayArray.innerHTML = (highScoresArray);
+  mainContainer.appendChild(displayArray);
+
+  // go back an clear high scores buttons
+  var goBack = document.createElement('btn');
+  goBack.classList.add('btn');
+  goBack.innerText = 'Go Back';
+  goBack.addEventListener('click', mainMenu);
+
+  var clearHighScores = document.createElement('btn');
+  clearHighScores.classList.add('btn');
+  clearHighScores.innerText = 'Clear High Scores';
+  clearHighScores.addEventListener('click', clearScores);
+
+  mainContainer.appendChild(goBack);
+  mainContainer.appendChild(clearHighScores);
 }
 
 // timer function
@@ -147,7 +237,9 @@ function updateTimer() {
   secondsLeft = startTime;
 
   secondsLeft = secondsLeft < 10 ? '0' + secondsLeft : secondsLeft;
-  if (secondsLeft == 0) {
+  if (secondsLeft <= 0) {
+    clearInterval(myTimer);
+    // timerEl.innerText = 0;
     endGame();
   };
 
@@ -178,7 +270,7 @@ var questions = [
     ]
   },
   {
-    question: 'Arrays in JavaScript can be used to store',
+    question: 'Arrays in JavaScript can be used to store.',
     answers: [
       { text: 'numbers and strings', correct: false },
       { text: 'other arrays', correct: false },
@@ -205,3 +297,5 @@ var questions = [
     ]
   }
 ]
+
+loadHighScores();
