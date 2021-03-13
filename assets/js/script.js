@@ -1,13 +1,14 @@
-var startTime = 60;
+var startTime = 10;
 var timerEl = document.getElementById('timer');
 var startButton = document.getElementById('start-btn');
-var questionContainerEl = document.getElementById('question-container');
-var questionEl = document.getElementById('question');
-var answerButtonsEl = document.getElementById('answer-buttons')
 var shuffledQuestions;
 var currentQuestionIndex;
 var myTimer;
 var secondsLeft;
+var answerButtonsGrid;
+var mainContainer = document.getElementById('container');
+mainContainer.classList.add('container');
+var questionContainerEl;
 
 startButton.addEventListener('click', startGame);
 
@@ -18,18 +19,32 @@ function startGame() {
   startButton.classList.add('hide');
   shuffledQuestions = questions.sort(() => Math.random() - .5);
   currentQuestionIndex = 0;
-  questionContainerEl.classList.remove('hide');
+  // questionContainerEl.classList.remove('hide');
   setNextQuestion();
 };
 
 // set next question
 function setNextQuestion() {
-  reset();
+  // reset();
   showQuestion(shuffledQuestions[currentQuestionIndex]);
 };
 
 function showQuestion(question) {
+  // create question container and append
+  questionContainerEl = document.createElement('div');
+  mainContainer.appendChild(questionContainerEl);
+
+  // create question text and append
+  var questionEl = document.createElement('div');
   questionEl.innerText = question.question;
+  questionContainerEl.appendChild(questionEl);
+
+  // create answer button grid and append
+  answerButtonsGrid = document.createElement('div');
+  answerButtonsGrid.classList.add('btn-grid');
+  questionContainerEl.appendChild(answerButtonsGrid);
+
+  // answer buttons and append
   question.answers.forEach(answer => {
     var button = document.createElement('button');
     button.innerText = answer.text;
@@ -38,14 +53,15 @@ function showQuestion(question) {
       button.dataset.correct = answer.correct;
     }
     button.addEventListener('click', selectAnswer);
-    answerButtonsEl.appendChild(button);
+    answerButtonsGrid.appendChild(button);
   });
 }
 
 function reset() {
-  while (answerButtonsEl.firstChild) {
-    answerButtonsEl.removeChild(answerButtonsEl.firstChild);
+  while (answerButtonsGrid.firstChild) {
+    answerButtonsGrid.removeChild(answerButtonsGrid.firstChild);
   };
+  questionContainerEl.removeChild(questionContainerEl.firstChild);
 };
 
 // selectAnswer and check if correct
@@ -66,17 +82,33 @@ function selectAnswer(e) {
     endGame();
   }
   else {
+    reset();
     setNextQuestion();
   };
 };
 
 function endGame() {
   reset();
-  questionEl.innerHTML = '<h1>All Done!</h1>';
-  answerButtonsEl.removeAttribute('class');
-  answerButtonsEl.innerHTML = "<p>You're final score is </p>" + secondsLeft;
+  // questionEl.innerHTML = '<h1>All Done!</h1>';
+  var allDone = document.createElement('h2');
+  allDone.innerText = 'All Done!';
+  mainContainer.appendChild(allDone);
+
+  // display high score
+  var scoreHolder = document.createElement('div');
+  scoreHolder.innerHTML = "<p>You're final score is " + secondsLeft + ".";
+  mainContainer.appendChild(scoreHolder);
+
+  // enter initials for high score
   var initials = document.createElement('input');
-  
+  var submit = document.createElement('button');
+  submit.classList.add('btn');
+  submit.innerText = "Submit";
+  var highScoreSubmit = document.createElement('div');
+  highScoreSubmit.innerHTML = "<p>Enter your initials below.</p>";
+  highScoreSubmit.appendChild(initials);
+  highScoreSubmit.appendChild(submit);
+  mainContainer.appendChild(highScoreSubmit);
 }
 
 // timer function
@@ -86,7 +118,7 @@ function updateTimer() {
 
   secondsLeft = secondsLeft < 10 ? '0' + secondsLeft : secondsLeft;
   if (secondsLeft == 0) {
-    return;
+    endGame();
   };
 
   timerEl.innerText = secondsLeft;
