@@ -29,6 +29,7 @@ main {
 .confirm {
   border-top: 3px solid turquoise;
   padding: 10px;
+  color: turquoise;
 }
 
 .btn-grid {
@@ -66,9 +67,14 @@ main {
   text-align: center;
 }
 
+.ul {
+  list-style-type: none;
+  padding: 0;
+}
+
 .li {
-  margin: 10px;
   font-size: 1.5rem;
+  padding: 10px;
 }
 
 .li:nth-child(odd) {
@@ -77,4 +83,5 @@ main {
 
 .input {
   margin-right: 10px;
+  margin-bottom: 20px;
 }

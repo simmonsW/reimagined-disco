@@ -103,21 +103,7 @@ function showQuestion(question) {
     answerButtonsGrid.appendChild(button);
   });
 
-  // confirmation div
-  rightWrong = document.createElement('div');
-  rightWrong.classList.add('confirm');
-  // answer correct
-  if (correct) {
-    rightWrong.innerHTML = "<h2>Correct!!</h2>"
-  }
-  // check if it's the first question
-  else if (!correct && currentQuestionIndex > 0) {
-    rightWrong.innerHTML = "<h2>WRONG!!</h2>"
-  }
-  // !correct and 
-  else {
-    rightWrong.innerHTML = '';
-  }
+  answerCheck();
   questionContainerEl.appendChild(rightWrong);
 }
 
@@ -127,19 +113,34 @@ function reset() {
   };
 };
 
+function answerCheck() {
+  // confirmation div
+  rightWrong = document.createElement('div');
+  rightWrong.classList.add('confirm');
+  // answer correct
+  if (correct) {
+    rightWrong.innerHTML = "<h2>Correct!!</h2>"
+  }
+  // answer !correct and not the first question
+  else if (!correct && currentQuestionIndex > 0) {
+    rightWrong.innerHTML = "<h2>WRONG!!</h2>"
+  }
+  // it's the first question
+  else {
+    rightWrong.innerHTML = '';
+  }
+  // questionContainerEl.appendChild(rightWrong);
+}
+
 // selectAnswer and check if correct
 function selectAnswer(e) {
   var selectedBtn = e.target;
   correct = selectedBtn.dataset.correct;
   if (correct) {
     console.log("correct");
-    // rightWrong.innerHTML = "<h2>Correct!!</h2>";
-    // mainContainer.appendChild(rightWrong);
   }
   else {
     console.log('wrongo');
-    // rightWrong.innerHTML = "<h2>Wrong!!</h2>";
-    // mainContainer.appendChild(rightWrong);
     startTime -= 10;
   };
   if (startTime <= 0) {
@@ -188,6 +189,9 @@ function endGame() {
   highScoreSubmit.appendChild(initials);
   highScoreSubmit.appendChild(submit);
   mainContainer.appendChild(highScoreSubmit);
+
+  answerCheck();
+  mainContainer.appendChild(rightWrong);
 }
 
 function storeHighScore() {
@@ -222,15 +226,16 @@ function highScores() {
   mainContainer.appendChild(title);
 
   // display high score array
-  var displayArray = document.createElement('ol');
+  var displayArray = document.createElement('ul');
+  displayArray.classList.add('ul');
   highScoresArray.sort((a,b) => (a.score < b.score) ? 1 : -1);
   for (var i = 0; i < highScoresArray.length; i++) {
-    
+    position = i + 1;
     var initial = highScoresArray[i].initiald;
     var score = highScoresArray[i].score;
     var scoreLi = document.createElement('li');
-    scoreLi.classList.add('li', 'li:nth-child(odd)');
-    scoreLi.innerHTML = initial.toUpperCase() + " - " + score;
+    scoreLi.classList.add('li', ':nth-child(odd)');
+    scoreLi.innerHTML = position + ". " + initial.toUpperCase() + " - " + score;
     displayArray.appendChild(scoreLi);
   }
   
