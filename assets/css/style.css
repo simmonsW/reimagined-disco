@@ -85,3 +85,7 @@ main {
   margin-right: 10px;
   margin-bottom: 20px;
 }
+
+.hide {
+  display: none;
+}

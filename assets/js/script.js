@@ -13,7 +13,6 @@ var highScoreLink = document.getElementById('high-scores');
 highScoreLink.addEventListener('click', highScores);
 var initials;
 var highScoresArray = [];
-// highScoresArray.sort((a,b) => (a.score > b.score) ? 1 : -1);
 var highScoreObj;
 var correct;
 
@@ -107,10 +106,16 @@ function showQuestion(question) {
   questionContainerEl.appendChild(rightWrong);
 }
 
-function reset() {
+function reset(includeHeader) {
   while (mainContainer.firstChild) {
     mainContainer.removeChild(mainContainer.firstChild);
   };
+  var header = document.getElementsByTagName("header")[0];
+  if (includeHeader) {
+    header.classList.add("hide");
+  } else {
+    header.classList.remove('hide');
+  }
 };
 
 function answerCheck() {
@@ -220,7 +225,7 @@ var clearScores = function() {
 };
 
 function highScores() {
-  reset();
+  reset(true);
   var title = document.createElement('h1');
   title.innerText = "High Scores";
   mainContainer.appendChild(title);
@@ -237,7 +242,7 @@ function highScores() {
     scoreLi.classList.add('li', ':nth-child(odd)');
     scoreLi.innerHTML = position + ". " + initial.toUpperCase() + " - " + score;
     displayArray.appendChild(scoreLi);
-  }
+  };
   
   // displayArray.innerHTML = (highScoresArray);
   mainContainer.appendChild(displayArray);
@@ -268,8 +273,6 @@ function updateTimer() {
   }
   else {
   clearInterval(myTimer);
-  // timerEl.innerText = 0;
-  // secondsLeft = 0;
   endGame();
   }
 };
