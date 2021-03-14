@@ -1,22 +1,26 @@
 var startTime = 60;
-var timerEl = document.getElementById('timer');
-var shuffledQuestions;
-var currentQuestionIndex;
 var myTimer;
 var secondsLeft;
-var answerButtonsGrid;
-var mainContainer = document.getElementById('container');
-mainContainer.classList.add('container');
+var shuffledQuestions;
+var currentQuestionIndex;
 var questionContainerEl;
+var answerButtonsGrid;
+var correct;
 var rightWrong;
-var highScoreLink = document.getElementById('high-scores');
-highScoreLink.addEventListener('click', highScores);
 var initials;
 var highScoresArray = [];
 var highScoreObj;
-var correct;
+
+// header and container elements
+var highScoreLink = document.getElementById('high-scores');
+highScoreLink.addEventListener('click', highScores);
+var timerEl = document.getElementById('timer');
+var mainContainer = document.getElementById('container');
+mainContainer.classList.add('container');
 
 window.onload = mainMenu();
+
+// load and save high scores
 
 var loadHighScores = function() {
   var savedScores = localStorage.getItem('highScoresArray');
@@ -55,7 +59,6 @@ function mainMenu() {
   startButton.innerText = 'Start';
   startWrapper.appendChild(startButton);
   mainContainer.appendChild(startWrapper);
-
   startButton.addEventListener('click', startGame);
 };
 
@@ -102,6 +105,7 @@ function showQuestion(question) {
     answerButtonsGrid.appendChild(button);
   });
 
+  // display previous answer confirmation right/wrong
   answerCheck();
   questionContainerEl.appendChild(rightWrong);
 }
@@ -133,9 +137,8 @@ function answerCheck() {
   // it's the first question
   else {
     rightWrong.innerHTML = '';
-  }
-  // questionContainerEl.appendChild(rightWrong);
-}
+  };
+};
 
 // selectAnswer and check if correct
 function selectAnswer(e) {
@@ -143,35 +146,28 @@ function selectAnswer(e) {
   correct = selectedBtn.dataset.correct;
   if (correct) {
     console.log("correct");
-  }
-  else {
+  } else {
     console.log('wrongo');
     startTime -= 10;
   };
   if (startTime <= 0) {
-    console.log('worked');
     secondsLeft = 0;
     timerEl.innerText = '0';
     endGame();
-  }
-  else {
+  } else {
     currentQuestionIndex++;
     if (currentQuestionIndex == questions.length) {
-      console.log('done');
-      // clearInterval(myTimer);
       endGame();
-    }
-    else {
-      // reset();
+    } else {
       setNextQuestion();
     };
-  }
+  };
 };
 
 function endGame() {
   clearInterval(myTimer);
   reset();
-  // questionEl.innerHTML = '<h1>All Done!</h1>';
+  // display All Done title
   var allDone = document.createElement('h1');
   allDone.innerText = 'All Done!';
   mainContainer.appendChild(allDone);
@@ -184,20 +180,23 @@ function endGame() {
   // enter initials for high score
   initials = document.createElement('input');
   initials.classList.add('input');
-  var submit = document.createElement('button');
+  // submit button
+  var submit = document.createElement('input');
   submit.classList.add('btn');
   submit.setAttribute('type', 'submit');
-  submit.innerText = "Submit";
+  // submit.innerText = "Submit";
   submit.addEventListener('click', storeHighScore);
+  // create high score container
   var highScoreSubmit = document.createElement('div');
   highScoreSubmit.innerHTML = "<p>Enter your initials below.</p>";
   highScoreSubmit.appendChild(initials);
   highScoreSubmit.appendChild(submit);
   mainContainer.appendChild(highScoreSubmit);
 
+  // display last answer confirmation right/wrong
   answerCheck();
   mainContainer.appendChild(rightWrong);
-}
+};
 
 function storeHighScore() {
   if (!initials.value) {
@@ -218,14 +217,17 @@ var clearScores = function() {
   localStorage.clear();
   while (highScoresArray.length > 0) {
     highScoresArray.pop();
-  }
-
+  };
+  
+  // back to main menu
   mainMenu();
-  console.log(highScoresArray);
 };
 
 function highScores() {
+  // reset and remove header
   reset(true);
+
+  // display title
   var title = document.createElement('h1');
   title.innerText = "High Scores";
   mainContainer.appendChild(title);
@@ -243,27 +245,26 @@ function highScores() {
     scoreLi.innerHTML = position + ". " + initial.toUpperCase() + " - " + score;
     displayArray.appendChild(scoreLi);
   };
-  
-  // displayArray.innerHTML = (highScoresArray);
   mainContainer.appendChild(displayArray);
 
-  // go back an clear high scores buttons
+  // go back button
   var goBack = document.createElement('btn');
   goBack.classList.add('btn');
   goBack.innerText = 'Go Back';
   goBack.addEventListener('click', mainMenu);
 
+  // clear high scores button
   var clearHighScores = document.createElement('btn');
   clearHighScores.classList.add('btn');
   clearHighScores.innerText = 'Clear High Scores';
   clearHighScores.addEventListener('click', clearScores);
 
+  // append buttons
   mainContainer.appendChild(goBack);
   mainContainer.appendChild(clearHighScores);
-}
+};
 
 // timer function
-
 function updateTimer() {
   secondsLeft = startTime;
   if (secondsLeft > 0) {
@@ -274,11 +275,10 @@ function updateTimer() {
   else {
   clearInterval(myTimer);
   endGame();
-  }
+  };
 };
 
 // questions array
-
 var questions = [
   {
     question: 'Commonly used data types do NOT include:',
@@ -325,6 +325,6 @@ var questions = [
       { text: 'console.log', correct: true },
     ]
   }
-]
+];
 
 loadHighScores();
